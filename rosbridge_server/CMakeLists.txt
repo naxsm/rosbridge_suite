@@ -12,6 +12,7 @@ ament_package()
 
 install(PROGRAMS
   scripts/rosbridge_websocket.py
+  scripts/rosbridge_tcp.py
   scripts/rosbridge_websocket
   DESTINATION lib/${PROJECT_NAME}
 )

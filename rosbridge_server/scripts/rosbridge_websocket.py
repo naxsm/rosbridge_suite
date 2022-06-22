@@ -138,7 +138,7 @@ class RosbridgeWebsocketNode(Node):
         ##################################################
 
         application = Application(
-            [(r"/", RosbridgeWebSocket), (r"", RosbridgeWebSocket)], **tornado_settings
+            [(r"/", RosbridgeWebSocket), (r"", RosbridgeWebSocket), (r"/rosbridge", RosbridgeWebSocket)], **tornado_settings
         )
 
         connected = False
@@ -181,6 +181,7 @@ class RosbridgeWebsocketNode(Node):
         ).value
 
         bson_only_mode = self.declare_parameter("bson_only_mode", False).value
+        print("bson_only_mode = {}".format(bson_only_mode))
 
         RosbridgeWebSocket.client_manager = ClientManager(self)
 
