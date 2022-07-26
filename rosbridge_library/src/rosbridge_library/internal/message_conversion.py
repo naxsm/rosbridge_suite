@@ -89,11 +89,12 @@ ros_primitive_types = [
     "string",
 ]
 ros_header_types = ["Header", "std_msgs/Header", "roslib/Header"]
-ros_binary_types = ["uint8[]", "char[]", "sequence<uint8>", "sequence<char>"]
+ros_binary_types = ["uint8[]", "int8[]", "char[]", "sequence<uint8>", "sequence<int8>", "sequence<char>"]
 list_tokens = re.compile("<(.+?)>")
 bounded_array_tokens = re.compile(r"(.+)\[.*\]")
 ros_binary_types_list_braces = [
     ("uint8[]", re.compile(r"uint8\[[^\]]*\]")),
+    ("int8[]", re.compile(r"int8\[[^\]]*\]")),
     ("char[]", re.compile(r"char\[[^\]]*\]")),
 ]
 
@@ -108,12 +109,14 @@ def configure(node_handle=None):
     global binary_encoder, binary_encoder_type, bson_only_mode
 
     if node_handle is not None:
-        binary_encoder_type = node_handle.get_parameter_or(
-            "binary_encoder", Parameter("", value="default")
-        ).value
-        bson_only_mode = node_handle.get_parameter_or(
-            "bson_only_mode", Parameter("", value=False)
-        ).value
+        # binary_encoder_type = node_handle.get_parameter_or(
+        #     "binary_encoder", Parameter("", value="default")
+        # ).value
+        # bson_only_mode = node_handle.get_parameter_or(
+        #     "bson_only_mode", Parameter("", value=False)
+        # ).value
+        binary_encoder_type = node_handle.get_parameter_or("binary_encoder", "default")
+        bson_only_mode = node_handle.get_parameter_or("bson_only_mode", False)
 
     if binary_encoder is None:
         if binary_encoder_type == "bson" or bson_only_mode:
@@ -123,6 +126,8 @@ def configure(node_handle=None):
         else:
             print("Unknown encoder type '%s'" % binary_encoder_type)
             exit(0)
+
+    print("BIN ENC: {} : {} / {} nh: {}".format(binary_encoder, bson_only_mode, binary_encoder_type, node_handle))
 
 
 def get_encoder():
@@ -199,19 +204,23 @@ def msg_class_type_repr(msg_class):
 
 
 def _from_inst(inst, rostype):
+    print("in _from_inst, rostype={}, type(inst)={}".format(rostype, type(inst)))
     global bson_only_mode
+    if bson_only_mode is None:
+        bson_only_mode = rospy.get_param("~bson_only_mode", False)
     # Special case for uint8[], we encode the string
     for binary_type, expression in ros_binary_types_list_braces:
         if expression.sub(binary_type, rostype) in ros_binary_types:
             encoded = get_encoder()(inst)
+            print("What type? {} {} {} {}".format(rostype, get_encoder(), encoded[:444], str(inst)[:444]))
+            if bson_only_mode:
+                return encoded
             return encoded.decode("ascii")
 
     # Check for time or duration
     if rostype in ros_time_types:
         return {"sec": inst.sec, "nanosec": inst.nanosec}
 
-    if bson_only_mode is None:
-        bson_only_mode = rospy.get_param("~bson_only_mode", False)
     # Check for primitive types
     if rostype in ros_primitive_types:
         # JSON does not support Inf and NaN. They are mapped to None and encoded as null

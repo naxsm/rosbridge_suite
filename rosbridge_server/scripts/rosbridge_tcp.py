@@ -1,22 +1,23 @@
 #!/usr/bin/env python
 
 # from rospy import init_node, get_param, loginfo, on_shutdown, Publisher
+from functools import partial
+from signal import SIG_DFL, SIGINT, signal
+from threading import Thread
+
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import QoSProfile, QoSDurabilityPolicy
-from rosbridge_server import RosbridgeTcpSocket
-
+from rclpy.qos import QoSDurabilityPolicy, QoSProfile
 from rosbridge_library.capabilities.advertise import Advertise
+from rosbridge_library.capabilities.advertise_service import AdvertiseService
+from rosbridge_library.capabilities.call_service import CallService
 from rosbridge_library.capabilities.publish import Publish
 from rosbridge_library.capabilities.subscribe import Subscribe
-from rosbridge_library.capabilities.advertise_service import AdvertiseService
 from rosbridge_library.capabilities.unadvertise_service import UnadvertiseService
-from rosbridge_library.capabilities.call_service import CallService
 
-from functools import partial
-from signal import signal, SIGINT, SIG_DFL
-from threading import Thread
 from std_msgs.msg import Int32
+
+from rosbridge_server import RosbridgeTcpSocket
 
 try:
     import SocketServer
@@ -24,9 +25,9 @@ except ImportError:
     import socketserver as SocketServer
 
 import sys
+import threading
 import time
 import traceback
-import threading
 #TODO: take care of socket timeouts and make sure to close sockets after killing program to release network ports
 
 #TODO: add new parameters to websocket version! those of rosbridge_tcp.py might not be needed, but the others should work well when adding them to .._websocket.py
@@ -77,7 +78,7 @@ class RosbridgeTcpsocketNode(Node):
         unregister_timeout = self.declare_parameter('unregister_timeout', RosbridgeTcpSocket.unregister_timeout).value
         # bson_only_mode = get_param('~bson_only_mode', False)
         bson_only_mode = self.declare_parameter('bson_only_mode', RosbridgeTcpSocket.bson_only_mode).value
-        bson_only_mode = True # override
+        #bson_only_mode = True # override
         print('bson_only_mode:' + str(bson_only_mode))
         
         if max_message_size == "None":

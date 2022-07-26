@@ -205,7 +205,12 @@ class MultiSubscriber:
         callbacks - subscriber callbacks to invoke
 
         """
-        print("callback: {} // {} -- {}".format(self.topic, __file__, self))
+        # print("callback: {} // {} -- {}".format(self.topic, __file__, self))
+
+        if self.topic == "/avt_341/points" and not hasattr(self.__class__, 'zxc'):
+            self.__class__.zxc = True
+            zxc33 = msg
+            # breakpoint()
 
         outgoing = OutgoingMessage(msg)
 

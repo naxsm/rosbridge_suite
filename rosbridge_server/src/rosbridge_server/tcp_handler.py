@@ -1,10 +1,10 @@
 # import rospy
-import rclpy
+import functools
 import struct
 from rosbridge_library.rosbridge_protocol import RosbridgeProtocol
 #######
 from std_msgs.msg import Int32
-import functools
+
 print = functools.partial(print, flush=True)
 #######
 try:
@@ -57,7 +57,9 @@ class RosbridgeTcpSocket(SocketServer.BaseRequestHandler):
         except Exception as exc:
             # rospy.logerr("Unable to accept incoming connection.  Reason: %s", str(exc))
             cls.ros_node.get_logger().info("Unable to accept incoming connection.  Reason: " + str(exc))
+            import traceback; traceback.print_exc()
         print("in setup, tnat=" + str(self.ros_node.get_topic_names_and_types()))
+        print('in setup, proto={}, self={}'.format(self.protocol, self))
 
 
     def recvall(self,n):
@@ -112,6 +114,8 @@ class RosbridgeTcpSocket(SocketServer.BaseRequestHandler):
             except:
                 import sys
                 print("exc in handle/recv_bson: " + str(sys.exc_info()))
+                import traceback
+                traceback.print_exc()
                 
         return
         while True:
