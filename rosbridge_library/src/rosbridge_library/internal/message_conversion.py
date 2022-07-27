@@ -109,12 +109,6 @@ def configure(node_handle=None):
     global binary_encoder, binary_encoder_type, bson_only_mode
 
     if node_handle is not None:
-        # binary_encoder_type = node_handle.get_parameter_or(
-        #     "binary_encoder", Parameter("", value="default")
-        # ).value
-        # bson_only_mode = node_handle.get_parameter_or(
-        #     "bson_only_mode", Parameter("", value=False)
-        # ).value
         binary_encoder_type = node_handle.get_parameter_or("binary_encoder", "default")
         bson_only_mode = node_handle.get_parameter_or("bson_only_mode", False)
 
