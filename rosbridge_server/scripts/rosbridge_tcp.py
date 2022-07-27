@@ -7,14 +7,15 @@ from threading import Thread
 
 import rclpy
 from rclpy.node import Node
-from rclpy.qos import QoSDurabilityPolicy, QoSProfile
+
+#from rclpy.qos import QoSDurabilityPolicy, QoSProfile
+from rclpy.qos import DurabilityPolicy, QoSProfile
 from rosbridge_library.capabilities.advertise import Advertise
 from rosbridge_library.capabilities.advertise_service import AdvertiseService
 from rosbridge_library.capabilities.call_service import CallService
 from rosbridge_library.capabilities.publish import Publish
 from rosbridge_library.capabilities.subscribe import Subscribe
 from rosbridge_library.capabilities.unadvertise_service import UnadvertiseService
-
 from std_msgs.msg import Int32
 
 from rosbridge_server import RosbridgeTcpSocket
@@ -28,6 +29,7 @@ import sys
 import threading
 import time
 import traceback
+
 #TODO: take care of socket timeouts and make sure to close sockets after killing program to release network ports
 
 #TODO: add new parameters to websocket version! those of rosbridge_tcp.py might not be needed, but the others should work well when adding them to .._websocket.py
@@ -107,7 +109,9 @@ class RosbridgeTcpsocketNode(Node):
         # QoS profile with transient local durability (latched topic in ROS 1).
         client_count_qos_profile = QoSProfile(
             depth=1,
-            durability=QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL
+            #durability=QoSDurabilityPolicy.RMW_QOS_POLICY_DURABILITY_TRANSIENT_LOCAL
+            #durability=DurabilityPolicy.VOLATILE,
+            durability=DurabilityPolicy.TRANSIENT_LOCAL,
         )
         RosbridgeTcpSocket.client_count_pub = self.create_publisher(Int32, 'client_count', qos_profile=client_count_qos_profile)
         # RosbridgeTcpSocket.client_count_pub.publish(0)

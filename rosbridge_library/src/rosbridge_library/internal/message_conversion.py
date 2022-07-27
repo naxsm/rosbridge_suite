@@ -127,8 +127,6 @@ def configure(node_handle=None):
             print("Unknown encoder type '%s'" % binary_encoder_type)
             exit(0)
 
-    print("BIN ENC: {} : {} / {} nh: {}".format(binary_encoder, bson_only_mode, binary_encoder_type, node_handle))
-
 
 def get_encoder():
     configure()
@@ -204,7 +202,6 @@ def msg_class_type_repr(msg_class):
 
 
 def _from_inst(inst, rostype):
-    print("in _from_inst, rostype={}, type(inst)={}".format(rostype, type(inst)))
     global bson_only_mode
     if bson_only_mode is None:
         bson_only_mode = rospy.get_param("~bson_only_mode", False)
@@ -212,7 +209,6 @@ def _from_inst(inst, rostype):
     for binary_type, expression in ros_binary_types_list_braces:
         if expression.sub(binary_type, rostype) in ros_binary_types:
             encoded = get_encoder()(inst)
-            print("What type? {} {} {} {}".format(rostype, get_encoder(), encoded[:444], str(inst)[:444]))
             if bson_only_mode:
                 return encoded
             return encoded.decode("ascii")

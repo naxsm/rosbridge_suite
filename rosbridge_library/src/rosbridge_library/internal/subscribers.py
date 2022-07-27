@@ -164,8 +164,6 @@ class MultiSubscriber:
         messages
 
         """
-        print("subscribe: {} // {} -- {}".format(self.topic, __file__, self))
-
         with self.lock:
             # If the topic is latched, adding a new subscriber will immediately invoke
             # the given callback.
@@ -205,13 +203,6 @@ class MultiSubscriber:
         callbacks - subscriber callbacks to invoke
 
         """
-        # print("callback: {} // {} -- {}".format(self.topic, __file__, self))
-
-        if self.topic == "/avt_341/points" and not hasattr(self.__class__, 'zxc'):
-            self.__class__.zxc = True
-            zxc33 = msg
-            # breakpoint()
-
         outgoing = OutgoingMessage(msg)
 
         # Get the callbacks to call

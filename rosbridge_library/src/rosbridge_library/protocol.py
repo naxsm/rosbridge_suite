@@ -106,7 +106,6 @@ class Protocol:
             self.delay_between_messages = self.parameters["delay_between_messages"]
             self.bson_only_mode = self.parameters.get("bson_only_mode", False)
 
-        print("Protocol.__init__, bson_only_mode = {}, self.parameters={}, self={}, nh={}".format(self.bson_only_mode, self.parameters, self, self.node_handle))
         message_conversion.configure(self.node_handle)
 
     # added default message_string="" to allow recalling incoming until buffer is empty without giving a parameter
@@ -299,19 +298,11 @@ class Protocol:
 
         Returns a JSON string representing the dictionary
         """
-        #if "grid" in msg['topic']:
-        #    breakpoint()
         try:
             if isinstance(msg, bytearray):
                 return msg
             if has_binary(msg) or self.bson_only_mode:
-                # if "pancy_gr" in msg['topic']:
-                #     breakpoint()
-                # return bson.BSON.encode(msg)
-                m2 = bson.BSON.encode(msg)
-                if "pancy_gr" in msg['topic']:
-                    print("pancy: {}".format(m2[:455]))
-                return m2
+                return bson.BSON.encode(msg)
             else:
                 return json.dumps(msg)
         except Exception as e:

@@ -70,11 +70,6 @@ class MessageHandler:
 
     def handle_message(self, msg):
         self.last_publish = time()
-        if not hasattr(self.__class__, 'zxc') and 'PointCloud2' in str(type(msg.message)):
-            self.__class__.zxc = True
-            zxc33 = msg
-            # breakpoint()
-
         self.publish(msg)
 
     def transition(self):
