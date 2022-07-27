@@ -298,6 +298,7 @@ class Protocol:
 
         Returns a JSON string representing the dictionary
         """
+        print("in serialize d345")
         try:
             if isinstance(msg, bytearray):
                 return msg
@@ -322,6 +323,7 @@ class Protocol:
         Returns a dictionary of values
 
         """
+        print("in deserialize d345")
         try:
             if self.bson_only_mode:
                 bson_message = bson.BSON(msg)

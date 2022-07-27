@@ -98,7 +98,10 @@ class IncomingQueue(threading.Thread):
             self.cond.notify()
 
     def run(self):
+        i = 0
         while True:
+            print("in run: {}".format(i))
+            i += 1
             with self.cond:
                 if len(self.queue) == 0 and not self._finished:
                     self.cond.wait()
@@ -107,7 +110,7 @@ class IncomingQueue(threading.Thread):
                     break
 
                 msg = self.queue.popleft()
-
+            print("incomming msg: {}".format(str(msg)[:111]))
             self.protocol.incoming(msg)
 
         self.protocol.finish()
@@ -161,10 +164,10 @@ class RosbridgeWebSocket(WebSocketHandler):
 
     @log_exceptions
     def on_message(self, message):
-        print("Got msg={}".format(msg))
+        cls.node_handle.get_logger().info("Got msg={}".format(msg))
         if isinstance(message, bytes):
             message = message.decode("utf-8")
-        print("Are we here? msg={}".format(msg))
+        cls.node_handle.get_logger().info("Are we here? msg={}".format(msg))
         self.incoming_queue.push(message)
 
     @log_exceptions
