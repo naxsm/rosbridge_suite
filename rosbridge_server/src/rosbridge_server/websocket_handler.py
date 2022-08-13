@@ -164,10 +164,8 @@ class RosbridgeWebSocket(WebSocketHandler):
 
     @log_exceptions
     def on_message(self, message):
-        cls.node_handle.get_logger().info("Got msg={}".format(msg))
-        if isinstance(message, bytes):
+        if not self.__class__.bson_only_mode and isinstance(message, bytes):
             message = message.decode("utf-8")
-        cls.node_handle.get_logger().info("Are we here? msg={}".format(msg))
         self.incoming_queue.push(message)
 
     @log_exceptions
