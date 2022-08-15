@@ -192,7 +192,6 @@ class RosbridgeWebsocketNode(Node):
         ).value
 
         bson_only_mode = self.declare_parameter("bson_only_mode", False).value
-        print("bson_only_mode = {}".format(bson_only_mode))
 
         RosbridgeWebSocket.client_manager = ClientManager(self)
 

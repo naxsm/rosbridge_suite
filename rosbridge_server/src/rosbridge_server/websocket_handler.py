@@ -98,10 +98,7 @@ class IncomingQueue(threading.Thread):
             self.cond.notify()
 
     def run(self):
-        i = 0
         while True:
-            print("in run: {}".format(i))
-            i += 1
             with self.cond:
                 if len(self.queue) == 0 and not self._finished:
                     self.cond.wait()
@@ -110,7 +107,6 @@ class IncomingQueue(threading.Thread):
                     break
 
                 msg = self.queue.popleft()
-            print("incomming msg: {}".format(str(msg)[:111]))
             self.protocol.incoming(msg)
 
         self.protocol.finish()
